@@ -1,0 +1,51 @@
+<h1 class="text-center">Daftar Produk</h1>
+<table class="table table-striped mt-12">
+  <thead>
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Nama</th>
+      <th scope="col">Harga</th>
+      <th scope="col">Deskripsi</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (products.length===0) { %>
+    <tr>
+      <td colspan="5">
+        <div class="alert alert-danger" role="alert">
+          <b>Product hasn't been filled</b>
+        </div>
+      </td>
+    </tr>
+    <% } %> <% products.forEach((product,i) => { i++%>
+    <tr>
+      <td><%=product.id%></td>
+      <td><%=product.nama_produk %></td>
+      <td>Rp. <%=product.harga %></td>
+      <td><%=product.deskripsi %></td>
+      <td>
+        <a href="/product-register=<%=product.id%>" class="btn btn-info"
+          >Details</a
+        >
+        <a
+          href="/product-register/delete=<%= product.id  %>"
+          class="btn btn-danger"
+          onclick="return confirm('Are you sure you want to delete this data?')"
+          >Delete</a
+        >
+        <a
+          href="/product-register/edit=<%= product.id  %>"
+          class="btn btn-warning"
+          >Edit</a
+        >
+      </td>
+    </tr>
+    <% }) %>
+    <a href="/add-product">
+      <button type="button" class="btn btn-primary">
+        Tambahkan product
+      </button></a
+    >
+  </tbody>
+</table>

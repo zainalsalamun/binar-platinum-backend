@@ -1,0 +1,63 @@
+.login-button{
+    border-radius: 20px;
+}
+.price{
+    color: red;
+    font-weight: 500;   
+}
+.price-desc{
+    font-style: italic;
+    font-size: 0.75rem;
+}
+.price-text{
+    font-size: 0.75rem;
+}
+.carousel-control-prev-icon{
+    background-color: black ;
+    padding: 10px;
+    border-radius:25px;
+}
+.carousel-control-next-icon{
+    background-color: black ;
+    padding: 10px;
+    border-radius:25px;
+}
+.card-container{
+    display: flex;
+    flex-wrap : wrap;
+}
+.footer{
+    margin: 2rem 0 0;
+    background-color: #e8e8e8;
+    padding: 2rem;
+}
+.footer p{
+    font-size: 18px;
+}
+.col a{
+    color: black;
+    text-decoration: none;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+.col a:hover{
+    color: rgba(0, 0, 0, 0.663);
+}
+
+.footer .container-lg{
+    border-bottom: 1px solid black;
+    padding-bottom: 2rem;
+}
+
+.container-detail{
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.058);
+    border: 1px solid rgba(0, 0, 0, 0.314); ;
+    padding: 50px;
+    border-radius: 20px;
+    display: flex;
+}
+
+.card{
+    margin: 5px;
+}

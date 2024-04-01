@@ -1,0 +1,15 @@
+<div class="container-detail">
+<div class="container-lg vh-50">
+    <div class="row align-items-center">
+      <div class="col-md-4">
+        <img src="img/products/<%=products.nama_file%>.jpg" width="100%" alt="<%=products.nama_file%>">
+      </div>
+      <div class="col-md-6">
+        <h2><%= products.nama_produk%></h2>
+        <p><%= products.deskripsi  %></p>
+        <div class="price h4">Rp. <%= products.harga  %></div><br>
+        <a href="https://api.whatsapp.com/send?phone=6285156965716&text=Halo Admin!%0ASaya%20mau%20pesan%20<%=products.nama_produk%>%0AApakah%20Masih%20Ada?%0ATerima%20Kasih"><button type="button" class="btn btn-outline-primary">Pesan Sekarang</button></a>
+      </div>
+    </div>
+  </div>
+</div>

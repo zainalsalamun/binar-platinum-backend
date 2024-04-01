@@ -1,0 +1,25 @@
+<div class="card-container" >
+
+<% if (products===0) {%>
+    <div class="alert alert-danger" role="alert">
+        <b>Contact hasn't been filled</b>
+      </div>
+<%} %>
+<% products.forEach((product,i) => {i++ %>
+    <div class="card" style="width: 15rem;">
+        <img src="img/products/<%=product.nama_file%>.jpg" class="card-img-top" alt="<%=product.nama_file%>" />
+        <div class="card-body">
+          <h5 class="card-title"><%= product.nama_produk%></h5>
+          <p class="price-text">
+            <%= product.deskripsi %>
+          </p>
+          <p class="price">Rp. <%= product.harga %></p>
+          <p class="price-desc">selama persediaan masih ada</p>
+          <a href="/product-register=<%=product.id%>" class="btn btn-outline-primary">Detail</a>
+        </div>
+      </div>
+<% }); %>
+
+</div>
+
+
