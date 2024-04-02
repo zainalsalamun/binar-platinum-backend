@@ -8,10 +8,9 @@ app.use(express.json());
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cosr = require('cors');
-// app.use(bodyParser.json());
+const cors = require('cors');
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cosr());
+app.use(cors());
 
 
 // const express = require('express');
@@ -124,6 +123,8 @@ const verifyToken = (req, res, next) => {
   if (!token) {
       return res.status(403).json({ message: 'Token is required' });
   }
+
+  
   try {
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
       req.userId = decoded.userId;
@@ -164,7 +165,7 @@ app.get("/add-product",(req,res)=>{
   })
 })
 
-app.post('/product-register',async(req,res)=>{
+app.post('/api/product-register',async(req,res)=>{
   const {nama_produk,harga,deskripsi,nama_file} = req.body;
   
   await db("products").insert({
@@ -175,6 +176,20 @@ app.post('/product-register',async(req,res)=>{
   })
   res.redirect('/product-register')
 })
+
+//API Add Product
+app.post('/api/product',async(req,res)=>{
+  const {nama_produk,harga,deskripsi,nama_file} = req.body;
+  
+  await db("products").insert({
+    'nama_produk':nama_produk,
+    'harga':harga,
+    'deskripsi':deskripsi,
+    'nama_file':nama_file
+  })
+  res.status(201).json({message:'Product added successfully'})
+})
+
 
 //menambahkan edit
 app.get('/product-register/edit=:id',async(req,res)=>{
@@ -263,6 +278,175 @@ app.get("/product-register/delete=:id", async (req, res) => {
   await db("products").where("id", id).del();
   res.redirect('/product-register')
 });
+
+
+// API Delete Product
+app.delete("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedProduct = await db("products")
+      .where("id", id)
+      .del();
+    if (deletedProduct) {
+      res.status(200).json({ message: "Product deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// API Add Image Slider
+app.post("/api/sliders", async (req, res) => {
+  const { gambar_slider, link_slider } = req.body;
+  try {
+    const newSlider = await db("sliders").insert({
+      gambar_slider,
+      link_slider,
+    });
+    if (newSlider) {
+      res.status(201).json({ message: "Image slider added successfully" });
+    } else {
+      res.status(400).json({ error: "Failed to add image slider" });
+    }
+  } catch (error) {
+    console.error("Error adding image slider:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// API Edit Slider
+app.put("/api/sliders/:id", async (req, res) => {
+  const { id } = req.params;
+  const { gambar_slider, link_slider } = req.body;
+  try {
+    const updatedSlider = await db("sliders")
+      .where("id", id)
+      .update({ gambar_slider, link_slider });
+    if (updatedSlider) {
+      res.status(200).json({ message: "Image slider edited successfully" });
+    } else {
+      res.status(404).json({ error: "Image slider not found" });
+    }
+  } catch (error) {
+    console.error("Error editing image slider:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API Delete Slider
+app.delete("/api/sliders/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedSlider = await db("sliders").where("id", id).del();
+    if (deletedSlider) {
+      res.status(200).json({ message: "Image slider deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Image slider not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting image slider:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API Get Sliders View
+app.get("/api/sliders/view", async (req, res) => {
+  try {
+    const sliders = await db("sliders").select("*");
+    res.status(200).json({ sliders });
+  } catch (error) {
+    console.error("Error getting sliders:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// API Add Category
+app.post("/api/categories", async (req, res) => {
+  const { title, image_path } = req.body;
+  try {
+    const newCategory = await db("categories").insert({
+      title,
+      image_path,
+    });
+    if (newCategory) {
+      res.status(201).json({ message: "Category added successfully" });
+    } else {
+      res.status(400).json({ error: "Failed to add category" });
+    }
+  } catch (error) {
+    console.error("Error adding category:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API Update Category
+app.put("/api/categories/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, image_path } = req.body;
+  try {
+    const updatedCategory = await db("categories").where("id", id).update({
+      title,
+      image_path,
+    });
+    if (updatedCategory) {
+      res.status(200).json({ message: "Category updated successfully" });
+    } else {
+      res.status(404).json({ error: "Category not found" });
+    }
+  } catch (error) {
+    console.error("Error updating category:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// API Get Categories
+app.get("/api/categories", async (req, res) => {
+  try {
+    const categories = await db("categories").select("*");
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error("Error getting categories:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+// API Delete Category
+app.delete("/api/categories/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedCategory = await db("categories").where("id", id).del();
+    if (deletedCategory) {
+      res.status(200).json({ message: "Category deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Category not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// API Get All Categories
+app.get("/api/categories/view", async (req, res) => {
+  try {
+    const categories = await db("categories").select("*");
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error("Error getting categories:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 // app.use("/", (req, res) => {
 //   res.render("404", {
