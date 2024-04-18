@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+const cloudinary = require('cloudinary').v2;
 
 
 // const express = require('express');
@@ -19,13 +20,12 @@ app.use(cors());
 // const db = require('./db');
 
 // app.use(express.json());
-// app.set('view engine', 'ejs');
 // app.set('views', './views');
 
 
 // Port Initiate
 const port = 3000;
-// // Middleware & View Engine
+
 app.set("view engine", "ejs");
 app.use(expresslayouts);
 app.use(express.static("Public"));
@@ -35,6 +35,13 @@ app.use(
 
 app.use(bodyParser.json());
 require('dotenv').config();
+
+
+cloudinary.config({ 
+  cloud_name: 'dacofpkis', 
+  api_key: '417969219389821', 
+  api_secret: '-mLQe1s2zevxoSF1isuDC0yKBrs' 
+});
 
 
 app.get('/api/users', async (req, res) => {
@@ -299,6 +306,25 @@ app.delete("/api/products/:id", async (req, res) => {
 });
 
 
+// API Get Detail Product
+app.get("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await db("products")
+      .where("id", id)
+      .first();
+    if (product) {
+      res.status(200).json(product);
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (error) {
+    console.error("Error getting product detail:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 // API Add Image Slider
 app.post("/api/sliders", async (req, res) => {
   const { gambar_slider, link_slider } = req.body;
@@ -411,10 +437,18 @@ app.get("/api/categories", async (req, res) => {
   try {
     const categories = await db("categories").select("*");
     res.status(200).json(categories);
+    if (!categories) {
+      res.status(404).json({ error: "Categories not found" });
+    } else {
+      res.status(200).json(categories);
+    }
+    
   } catch (error) {
     console.error("Error getting categories:", error);
     res.status(500).json({ error: "Internal server error" });
-  }
+  }  
+
+  
 });
 
 
@@ -455,7 +489,80 @@ app.get("/api/categories/view", async (req, res) => {
 //   });
 // });
 
-// App Listener
+
+// multer for upload files
+const multer  = require('multer');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname )
+  }
+})
+const upload = multer({ storage });
+
+
+async function uploadToCloudinary(filePath) {
+  let result;
+  try {
+    result = await cloudinary.uploader.upload(filePath, {
+      use_filename: true,
+    });
+    fs.unlinkSync(filePath);
+    return result.url;
+  } catch (error) {
+    fs.unlinkSync(filePath);
+    return null;
+  }
+}
+
+app.post('/api/cloudinary', upload.single('avatar'), async (req, res) => {
+  const url = await uploadToCloudinary(req.file.path);
+  if (url) {
+    return res.json({
+      message: 'File uploaded successfully',
+      url : url,
+    });
+  } else {
+    return res.json({
+      message: 'Failed to upload file',
+    })
+  }
+})
+
+ 
+// API upload files
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Please select a file" });
+    }
+
+    res.status(200).json({ message: "File uploaded successfully", file: req.file });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
+
+
+// API upload photo
+app.post('/api/photo', upload.single('photo'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Please select a photo" });
+    }
+    res.status(200).json({ message: "Photo uploaded successfully", file: req.file });
+  } catch (error) {
+    console.error("Error uploading photo:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
+
+
+
+
 app.listen(port, () => {
   console.log(`app is running on port ${port}`);
 });
