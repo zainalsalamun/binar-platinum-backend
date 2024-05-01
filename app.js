@@ -13,13 +13,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 const cloudinary = require('cloudinary').v2;
 
-
-// const express = require('express');
-// const app = express();
-
-// const db = require('./db');
-
-// app.use(express.json());
 // app.set('views', './views');
 
 
@@ -118,7 +111,8 @@ app.post('/api/login', async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
-      tgl_lahir: user.tgl_lahir
+      tgl_lahir: user.tgl_lahir,
+      
     }
   });
 });
@@ -173,26 +167,30 @@ app.get("/add-product",(req,res)=>{
 })
 
 app.post('/api/product-register',async(req,res)=>{
-  const {nama_produk,harga,deskripsi,nama_file} = req.body;
+  const {nama_produk,harga,deskripsi,nama_file,kategori,image} = req.body;
   
   await db("products").insert({
     'nama_produk':nama_produk,
     'harga':harga,
     'deskripsi':deskripsi,
-    'nama_file':nama_file
+    'nama_file':nama_file,
+    'kategori':kategori,
+    'image':image
   })
   res.redirect('/product-register')
 })
 
 //API Add Product
 app.post('/api/product',async(req,res)=>{
-  const {nama_produk,harga,deskripsi,nama_file} = req.body;
+  const {nama_produk,harga,deskripsi,nama_file,kategori,image} = req.body;
   
   await db("products").insert({
     'nama_produk':nama_produk,
     'harga':harga,
     'deskripsi':deskripsi,
-    'nama_file':nama_file
+    'nama_file':nama_file,
+    'kategori':kategori,
+    'image':image
   })
   res.status(201).json({message:'Product added successfully'})
 })
@@ -217,21 +215,24 @@ app.get('/product-register/edit=:id',async(req,res)=>{
 //API view produk
 app.get('/api/products',async(req,res)=>{
   const products = await db('products').select('*');
-  return res.json({
-    data:products
-  })
+  console.log(products)
+  
+  return res.json(products)
   
 })
 
 // Update product
 app.post('/product-register/edit=:id',async(req,res)=>{
   const id = req.params.id
-  const {nama_produk,harga,deskripsi,nama_file} = req.body
+  const {nama_produk,harga,deskripsi,nama_file,kategori,image} = req.body
   await db('products').where('id',id).update({
     'nama_produk':nama_produk,
     'harga':harga,
     'deskripsi':deskripsi,
-    'nama_file':nama_file
+    'nama_file':nama_file,
+    'kategori':kategori,
+    'image':image
+
   })
   res.redirect('/product-register')
 })
@@ -503,6 +504,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+// async function uploadToCloudinary(filePath) {
+//   let result;
+//   try {
+//     result = await cloudinary.uploader.upload(filePath, {
+//       use_filename: true,
+//     });
+//     fs.unlinkSync(filePath);
+//     return result.url;
+//   } catch (error) {
+//     console.error("Error uploading file to Cloudinary:", error);
+//     return null;
+//   }
+// }
+
+
 async function uploadToCloudinary(filePath) {
   let result;
   try {
@@ -512,10 +528,13 @@ async function uploadToCloudinary(filePath) {
     fs.unlinkSync(filePath);
     return result.url;
   } catch (error) {
-    fs.unlinkSync(filePath);
+    console.error("Error uploading file to Cloudinary:", error);
     return null;
   }
 }
+
+
+
 
 app.post('/api/cloudinary', upload.single('avatar'), async (req, res) => {
   const url = await uploadToCloudinary(req.file.path);
