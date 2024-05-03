@@ -177,7 +177,7 @@ app.post('/api/product-register',async(req,res)=>{
     'kategori':kategori,
     'image':image
   })
-  res.redirect('/product-register')
+  res.redirect('/products')
 })
 
 //API Add Product
