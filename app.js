@@ -21,7 +21,7 @@ const port = 3000;
 
 app.set("view engine", "ejs");
 app.use(expresslayouts);
-app.use(express.static("Public"));
+app.use(express.static("public"));
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
