@@ -12,12 +12,9 @@ const cors = require('cors');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 const cloudinary = require('cloudinary').v2;
+const port = process.env.ENV_PORT;
 
 // app.set('views', './views');
-
-
-// Port Initiate
-const port = 3000;
 
 app.set("view engine", "ejs");
 app.use(expresslayouts);
