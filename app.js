@@ -17,7 +17,7 @@ const cloudinary = require('cloudinary').v2;
 
 
 // Port Initiate
-const port = 3000;
+const port = process.env.PORT || 3030;
 
 app.set("view engine", "ejs");
 app.use(expresslayouts);
