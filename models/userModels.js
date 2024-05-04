@@ -1,3 +1,5 @@
+/*  TIDAK KEPAKAI KARENA PAKAI YG DI /api
+
 const db = require("../db"); // Assuming db.js contains the database connection
 
 // Function to register a new user
@@ -45,3 +47,4 @@ async function loginUser(email, password) {
 }
 
 module.exports = { registerUser, loginUser };
+*/
