@@ -1,5 +1,4 @@
-require('dotenv').config(); // Menggunakan dotenv untuk mengambil nilai environment variable dari file .env
-
+require('dotenv').config(); 
 module.exports = {
   development: {
     client: 'postgresql',
