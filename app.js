@@ -1,4 +1,3 @@
-// Module Import
 const express = require("express");
 const expresslayouts = require("express-ejs-layouts");
 const morgan = require("morgan");
@@ -72,19 +71,19 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-// async function uploadToCloudinary(filePath) {
-//   let result;
-//   try {
-//     result = await cloudinary.uploader.upload(filePath, {
-//       use_filename: true,
-//     });
-//     fs.unlinkSync(filePath);
-//     return result.url;
-//   } catch (error) {
-//     console.error("Error uploading file to Cloudinary:", error);
-//     return null;
-//   }
-// }
+async function uploadToCloudinary(filePath) {
+  let result;
+  try {
+    result = await cloudinary.uploader.upload(filePath, {
+      use_filename: true,
+    });
+    fs.unlinkSync(filePath);
+    return result.url;
+  } catch (error) {
+    console.error("Error uploading file to Cloudinary:", error);
+    return null;
+  }
+}
 
 
 async function uploadToCloudinary(filePath) {
@@ -144,6 +143,56 @@ app.post('/api/photo', upload.single('photo'), async (req, res) => {
   } catch (error) {
     console.error("Error uploading photo:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+})
+
+//API insert data order
+app.post('/api/order', async (req, res) => {
+  const { id_user, id_product, quantity, total_price, status, id_address, id_payment, id_shipping } = req.body;
+  try {
+    await db('order').insert({ id_user, id_product, quantity, total_price, status, id_address, id_payment, id_shipping });
+    res.status(200).json({ message: 'Order created successfully' });
+  } catch (error) {
+    console.error('Error creating order:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+});
+
+//API get data order
+app.get('/api/order', async (req, res) => {
+  try {
+    const orders = await db('order').select('*');
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error('Error getting orders:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+})
+
+//API delete data order
+app.delete('/api/order/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db('order').where('id', id).del();
+    res.status(200).json({ message: 'Order deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
+
+//API update data order
+app.put('/api/order/:id', async (req, res) => {
+  const { id } = req.params;
+  const { id_user, id_product, quantity, total_price, status, id_address, id_payment, id_shipping } = req.body;
+  try {
+    await db('order').where('id', id).update({ id_user, id_product, quantity, total_price, status, id_address, id_payment, id_shipping });
+    res.status(200).json({ message: 'Order updated successfully' });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 })
 
