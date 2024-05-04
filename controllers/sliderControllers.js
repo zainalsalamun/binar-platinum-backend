@@ -1,4 +1,4 @@
-const sliderModel = require("./sliderModels");
+const sliderModel = require("../models/sliderModels");
 
 async function getAllSliders(req, res) {
   try {

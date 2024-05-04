@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 // Get the base URL from environment variables
 const baseURL = process.env.BASE_URL || 'http://localhost:3030';
 

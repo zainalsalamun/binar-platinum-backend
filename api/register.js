@@ -4,7 +4,7 @@ const app = express();
 
 app.post('/api/register', async (req, res) => {
     try {
-      const { username, password, repeat_password, email, tgl_lahir } = req.body;
+      const { username, password, email, tgl_lahir } = req.body;
   
       const existingUser = users.find(user => user.username === username);
       if (existingUser) {
@@ -17,7 +17,6 @@ app.post('/api/register', async (req, res) => {
         id: users.length + 1,
         username,
         password: hashedPassword,
-        repeat_password: hashedPassword,
         email,
         tgl_lahir
       };

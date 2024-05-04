@@ -11,7 +11,6 @@ const cors = require('cors');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 const cloudinary = require('cloudinary').v2;
-const axios = require('axios');
 
 // app.set('views', './views');
 
@@ -29,18 +28,18 @@ app.use(
 app.use(bodyParser.json());
 require('dotenv').config();
 
+//Routing
+const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const sliderRoutes = require('./routes/sliderRoutes');
+
 //Cloudinary config
 cloudinary.config({ 
   cloud_name: 'process.env.CLOUD_NAME', 
   api_key: 'process.env.API_KEY', 
   api_secret: 'process.env.API_SECRET' 
 });
-
-//Routing
-const userRoutes = require('./routes/userRoutes');
-const productRoutes = require('./routes/productRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
-const sliderRoutes = require('./routes/sliderRoutes');
 
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
