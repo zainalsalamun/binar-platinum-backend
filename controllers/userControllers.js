@@ -1,71 +1,85 @@
-// Get the base URL from environment variables
-const baseURL = process.env.BASE_URL || 'http://localhost:3030';
+const userModel = require('../db')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+//"get user"
+async function getUser(req, res) {
+  const users = await userModel('Users').select('*')
+  return res.json({
+    data: users,
+  })
+}
 
 //"registerUser" Controller function to handle user registration
 async function registerUser(req, res) {
-    try {
-      const { username, password, repeat_password, email, tgl_lahir } = req.body;
-  
-      // Validation
-      if (!username || !password || !repeat_password || !email || !tgl_lahir) {
-        return res.status(400).json({ message: 'All fields are required' });
-      }
-  
-      if (password !== repeat_password) {
-        return res.status(400).json({ message: 'Passwords do not match' });
-      }
-  
-      // Call the register API
-      const response = await axios.post(`${baseURL}/api/register`, {
-        username,
-        password,
-        repeat_password,
-        email,
-        tgl_lahir
-      });
-  
-      // Handle different response status codes
-      if (response.status === 201) {
-        return res.status(201).json(response.data);
-      } else {
-        return res.status(500).json({ message: 'Internal server error' });
-      }
-    } catch (error) {
-      // Handle Axios errors
-      console.error('Error registering user:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+  const { username, password, email, tgl_lahir } = req.body
+
+  if (!username || !password || !email || !tgl_lahir) {
+    return res.status(400).json({ message: 'All fields are required' })
   }
+  if (password.length < 6) {
+    return res
+      .status(400)
+      .json({ message: 'Password must be at least 6 characters' })
+  }
+
+  if (await userModel('Users').where('username', username).first()) {
+    return res.status(400).json({ message: 'Username already exists' })
+  }
+
+  if (await userModel('Users').where('email', email).first()) {
+    return res.status(400).json({ message: 'Email already exists' })
+  }
+
+  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+    return res.status(400).json({ message: 'Invalid email address' })
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10)
+  try {
+    await userModel('Users').insert({
+      username,
+      password: hashedPassword,
+      email,
+      tgl_lahir,
+    })
+    return res.status(201).json({ message: 'User registered successfully' })
+  } catch (err) {
+    return res.status(500).json({ message: 'Failed to register' })
+  }
+}
 
 //"loginUser" Controller function to handle login user
 async function loginUser(req, res) {
-    try {
-      const { username, password } = req.body;
-  
-      // Validation
-      if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
-      }
-  
-      // Call the login API
-      const response = await axios.post(`${baseURL}/api/login`, {
-        username,
-        password
-      });
-  
-      // Handle different response status codes
-      if (response.status === 200) {
-        return res.status(200).json(response.data);
-      } else if (response.status === 401) {
-        return res.status(401).json({ message: 'Incorrect username or password' });
-      } else {
-        return res.status(500).json({ message: 'Internal server error' });
-      }
-    } catch (error) {
-      // Handle Axios errors
-      console.error('Error logging in user:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+  const { email, password } = req.body
+
+  const user = await userModel('Users').where('email', email).first()
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' })
   }
 
-module.exports = { registerUser, loginUser };
+  const isPasswordMatch = await bcrypt.compare(password, user.password)
+
+  if (!isPasswordMatch) {
+    return res.status(401).json({ message: 'Incorrect password' })
+  }
+
+  const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY)
+
+  if (!token) {
+    return res.status(500).json({ message: 'Failed to generate token' })
+  }
+
+  res.status(200).json({
+    message: 'Login successful',
+    token,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      tgl_lahir: user.tgl_lahir,
+    },
+  })
+}
+
+module.exports = { getUser, registerUser, loginUser }
