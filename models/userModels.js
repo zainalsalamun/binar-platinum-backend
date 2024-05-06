@@ -1,6 +1,5 @@
-const db = require('../db') // Assuming db.js contains the database connection
+const db = require('../db') 
 
-// Function to register a new user
 async function registerUser(username, password, email, tgl_lahir) {
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -44,4 +43,26 @@ async function loginUser(email, password) {
   }
 }
 
-module.exports = { registerUser, loginUser }
+async function getUser() {
+  try {
+    const users = await db('Users').select('*')
+    return users 
+  } catch (error) {
+    console.error('Error:', error)
+    return { success: false, message: 'Failed to get users' }
+  } 
+
+}
+
+async function getUserById(id) {
+  try {
+    const users = await db('Users').where('id', id).first()
+    return users
+    
+  } catch (error) {
+    console.error('Error:', error)
+    return { success: false, message: 'Failed to get user' }
+  }
+}
+
+module.exports = { registerUser, loginUser, getUser, getUserById }
