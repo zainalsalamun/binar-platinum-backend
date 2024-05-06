@@ -10,6 +10,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 const cloudinary = require('cloudinary').v2
 
+
+//SWAGGER
+const swaggerUi = require('swagger-ui-express')
+const apiDocumentation = require('./apidocs.json')
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocumentation))
+//END SWAGGER
+
 // app.set('views', './views');
 
 // Luki
