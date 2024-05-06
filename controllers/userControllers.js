@@ -1,7 +1,8 @@
 const userModel = require('../db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-//"get user"
+
+
 async function getUser(req, res) {
   const users = await userModel('Users').select('*')
   return res.json({
@@ -9,7 +10,17 @@ async function getUser(req, res) {
   })
 }
 
-//"registerUser" Controller function to handle user registration
+async function getUserById(req, res) {
+  const id = req.params.id
+  const user = await userModel('Users').where('id_user', id).first()
+  const { username, email, tgl_lahir } = user
+  return res.json({
+    username,
+    email,
+    tgl_lahir,
+  })
+}
+
 async function registerUser(req, res) {
   const { username, password, email, tgl_lahir } = req.body
 
@@ -48,7 +59,6 @@ async function registerUser(req, res) {
   }
 }
 
-//"loginUser" Controller function to handle login user
 async function loginUser(req, res) {
   const { email, password } = req.body
 
@@ -82,4 +92,4 @@ async function loginUser(req, res) {
   })
 }
 
-module.exports = { getUser, registerUser, loginUser }
+module.exports = { getUser, registerUser, loginUser , getUserById}
