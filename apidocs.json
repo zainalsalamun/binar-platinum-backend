@@ -1,0 +1,164 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Binar",
+    "description": "Daftar API Binar",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "localhost"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Product",
+      "description": "Product"
+    },
+    {
+      "name": "Category",
+      "description": "Category"
+    },
+    {
+      "name": "Order",
+      "description": "Order"
+    },
+    {
+      "name": "Slider",
+      "description": "Slider"
+    },
+    {
+      "name": "User",
+      "description": "User"
+    }
+  ],
+  "paths": {
+    "/api/products": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get All Product",
+        "description": "Get Product Data",
+        "responses": {
+          "200": {
+            "description": "sukses"
+          },
+          "404": {
+            "description": "not found!"
+          }
+        }
+      }
+    },
+    "/api/products/add": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Post Product",
+        "consumes": "multipart/form-data",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nama_produk": {
+                    "type": "string"
+                  },
+                  "harga": {
+                    "type": "integer"
+                  },
+                  "deskripsi": {
+                    "type": "string"
+                  },
+                  "nama_file": {
+                    "type": "string"
+                  },
+                  "kategori": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get One Product",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID Product"
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Product"],
+        "summary": "Update Product",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID Product"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nama_produk": {
+                    "type": "string"
+                  },
+                  "harga": {
+                    "type": "integer"
+                  },
+                  "deskripsi": {
+                    "type": "string"
+                  },
+                  "nama_file": {
+                    "type": "string"
+                  },
+                  "kategori": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Product"],
+        "summary": "Delete Product",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID Product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sukses"
+          }
+        }
+      }
+    }
+  }
+}
