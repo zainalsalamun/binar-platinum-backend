@@ -1,0 +1,31 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build-and-deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          repository: zainalsalamun/binar-platinum-backend
+          path: backend
+
+      - name: Setup Node.js environment for backend
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install backend dependencies
+        run: npm install --prefix backend
+
+      - name: Deploy backend to Vercel
+        if: github.ref == 'refs/heads/main' # Deploy only on main branch
+        run: |
+          npm install -g vercel
+          vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --scope zainalsalamun --confirm
