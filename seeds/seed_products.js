@@ -9,20 +9,20 @@ exports.seed = function(knex) {
       // Inserts seed entries
       return knex('products').insert([
         { 
-          nama_produk: 'Produk 1', 
+          nama_produk: 'Kursi', 
           harga: '100000', 
-          deskripsi: 'Deskripsi produk 1', 
-          nama_file: 'file_produk_1', 
-          kategori: 'Kategori 1', 
-          image: 'image_produk_1.jpg' 
+          deskripsi: 'Ini kursi untuk duduk yang sangat nyaman ', 
+          nama_file: 'kursi', 
+          kategori: 'kursi', 
+          image: 'img/produst/kursi.jpg' 
         },
         { 
-          nama_produk: 'Produk 2', 
+          nama_produk: 'Sikat', 
           harga: '150000', 
-          deskripsi: 'Deskripsi produk 2', 
-          nama_file: 'file_produk_2', 
-          kategori: 'Kategori 2', 
-          image: 'image_produk_2.jpg' 
+          deskripsi: 'Sikat untuk menggosok lantai', 
+          nama_file: 'Sikat', 
+          kategori: 'sikat', 
+          image: 'img/prodict/sikat.jpg' 
         },
         // tambahkan data lainnya sesuai kebutuhan
       ]);
