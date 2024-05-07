@@ -9,7 +9,17 @@ const cors = require('cors')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 const cloudinary = require('cloudinary').v2
+const fs = require ('fs');
+const https = require ('https')
 
+//HTTPS OPTIONS
+const httpsOptions = {
+  key: fs.readFileSync('/etc/ssl/private/selfsigned.key'),
+  cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt')
+};
+
+//HTTPS SERVER
+const server = https.createServer(httpsOptions, app);
 
 //SWAGGER
 const swaggerUi = require('swagger-ui-express')
@@ -137,8 +147,7 @@ app.post('/api/photo', upload.single('photo'), async (req, res) => {
   }
 })
 
-
-
-app.listen(port, () => {
-  console.log(`app is running on port ${port}`)
-})
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
