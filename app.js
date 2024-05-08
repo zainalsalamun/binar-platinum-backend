@@ -13,13 +13,13 @@ const fs = require ('fs');
 const https = require ('https')
 
 //HTTPS OPTIONS
-const httpsOptions = {
-  key: fs.readFileSync('/etc/ssl/private/selfsigned.key'),
-  cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt')
-};
+// const httpsOptions = {
+//   key: fs.readFileSync('/etc/ssl/private/selfsigned.key'),
+//   cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt')
+// };
 
 //HTTPS SERVER
-const server = https.createServer(httpsOptions, app);
+// const server = https.createServer(httpsOptions, app);
 
 //SWAGGER
 const swaggerUi = require('swagger-ui-express')
@@ -147,7 +147,6 @@ app.post('/api/photo', upload.single('photo'), async (req, res) => {
   }
 })
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+server = app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+})
